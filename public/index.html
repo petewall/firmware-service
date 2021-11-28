@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Firmware Service</title>
+  <!-- <script src="/lib/jquery/jquery.min.js"></script> -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
+  <script src="/devices.js"></script>
+  <!-- <script src="/lib/jquery-dragndrop/jquery.dragndrop.js"></script> -->
+  <!-- <link rel="icon" type="image/png" id="favicon" href="/static/favicon.png"/> -->
+</head>
+
+<body class="ui container">
+
+  <div class="ui top attached tabular menu">
+    <a class="active item" data-tab="devices">Devices</a>
+    <a class="item" data-tab="firmware">Firmware</a>
+  </div>
+  <div class="ui bottom attached active tab segment" data-tab="devices">
+
+    <table class="ui celled table">
+      <thead>
+        <tr>
+          <th>MAC</th>
+          <!-- <th>Uptime</th> -->
+          <th>Last Update Request</th>
+          <th>Current Firmware</th>
+          <th>Assigned Firmware</th>
+          <!-- <th>Assigned Version</th> -->
+        </tr>
+      </thead>
+      <tbody id="device-table"></tbody>
+    </table>
+
+  </div>
+  <div class="ui bottom attached tab segment" data-tab="firmware">
+    <p>firmware list</p>
+  </div>
+
+  <script>
+    $('.menu .item').tab()
+  </script>
+
+</body>
+</html>

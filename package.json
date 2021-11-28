@@ -1,0 +1,24 @@
+{
+  "name": "firmware-service",
+  "version": "0.0.1",
+  "description": "A service for managing and serving firmware binaries",
+  "main": "index.js",
+  "repository": "https://github.com/petewall/firmware-service.git",
+  "author": "Pete Wall <pete@petewall.net>",
+  "license": "MIT",
+  "private": false,
+  "type": "module",
+  "scripts": {
+    "local-mongodb": "scripts/setup-firmware-db.sh"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "http-status": "^1.5.0",
+    "jquery": "^3.6.0",
+    "morgan": "^1.10.0",
+    "semver": "^7.3.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.3.0"
+  }
+}
