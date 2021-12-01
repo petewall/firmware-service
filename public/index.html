@@ -8,20 +8,17 @@
     integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css">
   <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
-  <script src="/devices.js"></script>
-  <!-- <script src="/lib/jquery-dragndrop/jquery.dragndrop.js"></script> -->
   <!-- <link rel="icon" type="image/png" id="favicon" href="/static/favicon.png"/> -->
 </head>
 
-<body class="ui container">
+<body>
 
-  <div class="ui top attached tabular menu">
+  <div class="ui top attached inverted menu">
     <a class="active item" data-tab="devices">Devices</a>
     <a class="item" data-tab="firmware">Firmware</a>
   </div>
   <div class="ui bottom attached active tab segment" data-tab="devices">
-
-    <table class="ui celled table">
+    <table class="ui celled table" id="device-table">
       <thead>
         <tr>
           <th>MAC</th>
@@ -32,17 +29,29 @@
           <!-- <th>Assigned Version</th> -->
         </tr>
       </thead>
-      <tbody id="device-table"></tbody>
+      <tbody></tbody>
     </table>
-
   </div>
+
   <div class="ui bottom attached tab segment" data-tab="firmware">
-    <p>firmware list</p>
+    <table class="ui celled table" id="firmware-table">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Version</th>
+          <th>Size</th>
+          <!-- <th>Enabled</th> -->
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
   <script>
     $('.menu .item').tab()
   </script>
+  <script src="/devices.js"></script>
+  <script src="/firmware.js"></script>
 
 </body>
 </html>

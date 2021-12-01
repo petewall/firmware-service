@@ -1,5 +1,5 @@
-import Devices from '../lib/devices.js'
-import { Router } from 'express'
+const Devices = require('../lib/devices.js')
+const Router = require('express').Router
 const router = Router()
 
 const devices = new Devices()
@@ -9,4 +9,4 @@ router.get('/', async (req, res) => {
   res.json(deviceList.map((device) => device.json()))
 })
 
-export default router
+module.exports = router
