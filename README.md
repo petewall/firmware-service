@@ -1,17 +1,15 @@
 # Firmware Service
 
-This is a replacement for the OTA service.
+Todo:
 
-The architecture:
+* Store firmware binaries on the FS (for now)
 
-1. Dependency on mongodb for firmware status
-2. Dependency on minio for firmware storage?
+* Manage firmware entries with redis
+  type, version, size, location
+* Manage devices with redis
+  devices
+    mac, currentType, currentVersion, assignedType, assignedVersion (pinning)
+  device updates
+  mac, time, result
 
-Tested in cypress
-UI designed with fomantic
-
-
-
-UI design:
-List on the left with binaries that have registrered with the service
-List on the right, displayed in collapsable categories by firmware type, expanded to show versions.
+* Add firmware-store to store firmware binaries

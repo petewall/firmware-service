@@ -1,5 +1,11 @@
+function byMAC(a, b) {
+  return a.mac.localeCompare(b.mac)
+}
+
 $(() => {
   $.get('/devices', (devices) => {
+    devices.sort(byMAC)
+
     $('#device-table tbody').empty()
     devices.map((device) => {
       const currentFirmware = `${device.currentFirmware.type} ${device.currentFirmware.version}`

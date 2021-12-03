@@ -2,13 +2,21 @@
 
 const express = require('express')
 const app = express()
-const deviceRouter = require('./api/devices.js')
-const firmwareRouter = require('./api/firmware.js')
-const morgan = require('morgan')
 const port = process.env.PORT || 5000
+const server = require('http').createServer(app)
+const socketServer = require('socket.io')(server)
 
-app.use(morgan('combined'))
-app.use('/devices', deviceRouter)
-app.use('/firmware', firmwareRouter)
+socketServer.on('connection', () => {
+  console.log('New user connected')
+})
+
+app.use(require('morgan')('combined'))
+app.use('/devices', require('./api/devices.js'))
+app.use('/firmware', require('./api/firmware.js')(socketServer))
+
 app.use(express.static('public'))
-app.listen(port)
+app.use('/lib/jquery', express.static('node_modules/jquery/dist'))
+app.use('/lib/jquery-address', express.static('node_modules/jquery-address/src'))
+app.use('/lib/socket.io', express.static('node_modules/socket.io/client-dist'))
+
+server.listen(port)
