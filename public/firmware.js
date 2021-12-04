@@ -11,7 +11,7 @@ function deleteFirmware(row, type, version) {
 
 function byTypeAndVersion(a, b) {
   if (a.type == b.type) {
-    return a.version.localeCompare(b.version)
+    return -a.version.localeCompare(b.version)
   }
   return a.type.localeCompare(b.type)
 }
