@@ -11,8 +11,8 @@ socketServer.on('connection', () => {
 })
 
 app.use(require('morgan')('combined'))
-app.use('/devices', require('./api/devices.js'))
-app.use('/firmware', require('./api/firmware.js')(socketServer))
+app.use('/api/devices', require('./api/devices.js'))
+app.use('/api/firmware', require('./api/firmware.js')(socketServer))
 
 app.use(express.static('public'))
 app.use('/lib/jquery', express.static('node_modules/jquery/dist'))

@@ -1,5 +1,6 @@
 const Firmware = require('../lib/firmware.js')
 const FirmwareLibrary = require('../lib/firmware-library.js')
+const bodyParser = require('body-parser')
 const router = require('express').Router()
 const status  = require('http-status')
 
@@ -14,9 +15,9 @@ module.exports = (socketServer) => {
     res.json(await firmwareLibrary.getAllTypes())
   })
 
-  router.put('/:type/:version([0-9a-zA-Z-._]+)', async (req, res) => {
-    const firmware = new Firmware(req.params.type, req.params.version, 100)
-    const created = await firmwareLibrary.add(firmware)
+  router.put('/:type/:version([0-9a-zA-Z-._]+)', bodyParser.raw({ limit: '5mb' }), async (req, res) => {
+    const firmware = new Firmware(req.params.type, req.params.version, req.body.length)
+    const created = await firmwareLibrary.add(firmware, req.body)
     if (created) {
       res.sendStatus(status.CREATED)
     } else {

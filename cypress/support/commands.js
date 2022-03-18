@@ -10,7 +10,24 @@
 //
 //
 // -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
+Cypress.Commands.add('uploadFirmware', (type, version, size) => {
+  const blocks = Array.from(
+    {length: size},
+    () => Uint8Array.from(
+      {length: 1024 * 1024},
+      () => Math.floor(Math.random() * 256)
+    )
+  )
+
+  return cy.request({
+    method: 'PUT',
+    url: `http://localhost:5000/api/firmware/${type}/${version}`,
+    body: blocks,
+    headers: {
+      'content-type': 'application/octet-stream'
+    }
+  })
+})
 //
 //
 // -- This is a child command --
