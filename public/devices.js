@@ -3,7 +3,7 @@ function byMAC(a, b) {
 }
 
 $(() => {
-  $.get('/devices', (devices) => {
+  $.get('/api/devices', (devices) => {
     devices.sort(byMAC)
 
     $('#device-table tbody').empty()

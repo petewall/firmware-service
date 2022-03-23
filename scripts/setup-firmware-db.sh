@@ -3,8 +3,10 @@
 # https://hub.docker.com/_/mongo?tab=description
 
 docker run \
+  --detach \
   --name firmware-db \
   --env MONGO_INITDB_ROOT_USERNAME=mongoadmin \
   --env MONGO_INITDB_ROOT_PASSWORD=secret \
   --volume $(pwd)/temp/firmware-db:/data/db \
-  mongo:5.0.4
+  --publish 27017:27017 \
+  mongo:5.0.6

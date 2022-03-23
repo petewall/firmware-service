@@ -1,7 +1,7 @@
 function deleteFirmware(row, type, version) {
   const yesDelete = confirm(`Are you sure you want to delete the firmware ${type} ${version}?\nThis action cannot be undone!`)
   if (yesDelete) {
-    $.ajax(`/firmware/${type}/${version}`, {
+    $.ajax(`/api/firmware/${type}/${version}`, {
       method: 'DELETE',
     }).done(() => {
       row.remove()
@@ -17,7 +17,7 @@ function byTypeAndVersion(a, b) {
 }
 
 $(() => {
-  $.get('/firmware', (firmwareLibrary) => {
+  $.get('/api/firmware', (firmwareLibrary) => {
     firmwareLibrary.sort(byTypeAndVersion)
 
     $('#firmware-table tbody').empty()
