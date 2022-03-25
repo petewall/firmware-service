@@ -1,6 +1,4 @@
-const Firmware = require('./firmware')
-
-class FirmwareLibrary {
+class FirmwareStore {
   constructor(db) {
     this.db = db
   }
@@ -18,7 +16,6 @@ class FirmwareLibrary {
       .sort({'type': 1, 'version': 1})
       .toArray()
   }
-
 
   async getAllTypes() {
     const types = await this.db.find()
@@ -45,4 +42,4 @@ class FirmwareLibrary {
   }
 }
 
-module.exports = FirmwareLibrary
+module.exports = FirmwareStore

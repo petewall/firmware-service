@@ -1,9 +1,7 @@
 {
     "env": {
-        "browser": true,
-        "cypress/globals": true,
         "es2021": true,
-        "jquery": true,
+        "jest/globals": true,
         "node": true
     },
     "extends": "eslint:recommended",
@@ -11,9 +9,7 @@
         "ecmaVersion": 12,
         "sourceType": "module"
     },
-    "plugins": [
-        "cypress"
-    ],
+    "plugins": ["jest"],
     "rules": {
         "indent": [
             "error",
