@@ -23,6 +23,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "start-server": "node server.js"
+    "start": "node server.js",
+    "test": "jest *.test.js"
   }
 }

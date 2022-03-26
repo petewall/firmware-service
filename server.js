@@ -2,10 +2,7 @@
 
 const express = require('express')
 const app = express()
-const bodyParser = require('body-parser')
 const server = require('http').createServer(app)
-const FirmwareStore = require('./firmware-store.js')
-const status = require('http-status')
 
 const port = process.env.PORT || 5000
 
@@ -25,8 +22,7 @@ async function connectToFirmwareDB() {
 
 (async function main() {
   const db = await connectToFirmwareDB()
-  const firmwareStore = new FirmwareStore(db.collection('firmware'))
-  const firmwareAPI = require('./api.js')(firmwareStore)
+  const firmwareAPI = require('./api.js')(db.collection('firmware'))
   app.use(firmwareAPI)
   server.listen(port)
 })()
