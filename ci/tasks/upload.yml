@@ -1,0 +1,26 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: curlimages/curl
+
+params:
+  TYPE:
+  FIRMWARE_SERVICE:
+
+inputs:
+  - name: binaries
+  - name: version
+
+run:
+  path: sh
+  args:
+    - -exc
+    - |
+      curl \
+        --fail \
+        --upload-file binaries/*.bin \
+        --header "Content-Type: application/octet-stream" \
+        "${FIRMWARE_SERVICE}/${TYPE}/$(cat version/version)"

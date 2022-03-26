@@ -151,21 +151,19 @@ describe('API', () => {
 
   describe('GET /<type>/<version>', () => {
     beforeEach(() => {
-      findOneReturn = [
-        fakeFirmware('bootloader', '1.2.3', 100)
-      ]
+      findOneReturn = fakeFirmware('bootloader', '1.2.3', 100)
     })
 
     it('returns a specific firmware', async () => {
       const response = await supertest(app).get('/bootloader/1.2.3')
 
       expect(response.status).toEqual(status.OK)
-      expect(response.body).toEqual([{
+      expect(response.body).toEqual({
         type: 'bootloader',
         version: '1.2.3',
         size: 100,
         data: '100 bits of binary data'
-      }])
+      })
 
       expect(db.findOne.mock.calls.length).toEqual(1)
       expect(db.findOne.mock.calls[0][0]).toEqual({
@@ -194,6 +192,28 @@ describe('API', () => {
     })
   })
 
+  describe('GET /<type>/<version>/data', () => {
+    beforeEach(() => {
+      findOneReturn = fakeFirmware('bootloader', '1.2.3', 100)
+    })
+
+    it('downloads the firmware data', async () => {
+      const response = await supertest(app).get('/bootloader/1.2.3/data')
+
+      expect(response.status).toEqual(status.OK)
+      expect(response.headers['content-type']).toEqual('application/octet-stream; charset=utf-8')
+      expect(response.body).toEqual(
+        Buffer.from('100 bits of binary data')
+      )
+
+      expect(db.findOne.mock.calls.length).toEqual(1)
+      expect(db.findOne.mock.calls[0][0]).toEqual({
+        type: 'bootloader',
+        version: '1.2.3'
+      })
+    })
+  })
+
   describe('PUT /<type>/<version>', () => {
     beforeEach(() => {
       insertOneReturn = {
@@ -207,14 +227,54 @@ describe('API', () => {
         .send('this is the new firmware content')
 
       expect(response.status).toEqual(status.CREATED)
-      // expect(response.error.text).toEqual('no firmware found for type "nothing" with version "9.9.9-rc1"')
 
       expect(db.insertOne.mock.calls.length).toEqual(1)
       expect(db.insertOne.mock.calls[0][0]).toEqual({
         type: 'bootloader',
         version: '2.0.0',
         size: 'this is the new firmware content'.length,
-        data: Array.from(Buffer.from('this is the new firmware content'))
+        data: Buffer.from('this is the new firmware content')
+      })
+    })
+  })
+
+  describe('DELETE /<type>/<version>', () => {
+    beforeEach(() => {
+      deleteOneReturn = {
+        deletedCount: 1
+      }
+    })
+
+    it('removes a firmware', async () => {
+      const response = await supertest(app).delete('/bootloader/2.0.0')
+
+      expect(response.status).toEqual(status.OK)
+
+      expect(db.deleteOne.mock.calls.length).toEqual(1)
+      expect(db.deleteOne.mock.calls[0][0]).toEqual({
+        type: 'bootloader',
+        version: '2.0.0'
+      })
+    })
+  })
+
+  describe('DELETE /<type>/<version> (not found)', () => {
+    beforeEach(() => {
+      deleteOneReturn = {
+        deletedCount: 0
+      }
+    })
+
+    it('removes a firmware', async () => {
+      const response = await supertest(app).delete('/bootloader/2.0.0')
+
+      expect(response.status).toEqual(status.NOT_FOUND)
+      expect(response.error.text).toEqual('no firmware found for type "bootloader" with version "2.0.0"')
+
+      expect(db.deleteOne.mock.calls.length).toEqual(1)
+      expect(db.deleteOne.mock.calls[0][0]).toEqual({
+        type: 'bootloader',
+        version: '2.0.0'
       })
     })
   })

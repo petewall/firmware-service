@@ -72,7 +72,7 @@ module.exports = (db) => {
     if (result.deletedCount === 1) {
       res.sendStatus(status.OK)
     } else {
-      res.sendStatus(status.NOT_FOUND)
+      res.status(status.NOT_FOUND).send(`no firmware found for type "${req.params.type}" with version "${req.params.version}"`)
     }
   })
 
