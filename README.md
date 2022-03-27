@@ -28,3 +28,5 @@ This service is for managing a store of firmware binaries.
   * Create new record? firmware is immutable, but the newest copy is used
 * Add APIs for
   * Get latest firmware for a given type `GET /<type>/latest`. `latest` becomes a protected version
+* Better error handling for rejected promises
+* Enable integration testing in CI
