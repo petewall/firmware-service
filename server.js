@@ -1,28 +1,51 @@
-#!/usr/local/bin/node
-
 const express = require('express')
 const app = express()
-const server = require('http').createServer(app)
+const debug = require('debug')
+const log = debug('firmware-service')
+debug.enable('firmware-service')
+const morgan = require('morgan')
+const { MongoClient } = require('mongodb')
 
-const port = process.env.PORT || 5000
+app.use(morgan('dev', { stream: { write: msg => log(msg) } }))
 
-app.use(require('morgan')('combined'))
-
-async function connectToFirmwareDB() {
-  const firmwareDBHost = process.env.FIRMWARE_DB_HOST || 'localhost'
-  const firmwareDBPort = process.env.FIRMWARE_DB_PORT || 27017
-  const firmwareDBUsername = process.env.FIRMWARE_DB_USERNAME || 'mongoadmin'
-  const firmwareDBPassword = process.env.FIRMWARE_DB_PASSWORD || 'secret'
-
-  const { MongoClient } = require('mongodb')
-  const mongodb = new MongoClient(`mongodb://${firmwareDBUsername}:${firmwareDBPassword}@${firmwareDBHost}:${firmwareDBPort}`)
+async function connectToFirmwareDB(config) {
+  const connectionURI = `mongodb://${config.db.username}:${config.db.password}@${config.db.host}:${config.db.port}`
+  const connectionURIRedacted = `mongodb://${config.db.username}:<redacted>@${config.db.host}:${config.db.port}`
+  log(`Connecting to MongoDB: ${connectionURIRedacted}...`)
+  const mongodb = new MongoClient(connectionURI)
   await mongodb.connect()
-  return mongodb.db('firmware-service')
+
+  return mongodb
 }
 
-(async function main() {
-  const db = await connectToFirmwareDB()
-  const firmwareAPI = require('./api.js')(db.collection('firmware'))
+async function initializeCollection(mongodb, config) {
+  const collectionName = 'firmware'
+  log(`Connecting to db: ${config.db.name}...`)
+  const db = mongodb.db(config.db.name)
+
+  if (!db.listCollections({name: collectionName}).hasNext()) {
+    log(`Creating collection: ${collectionName}`)
+    await db.createCollection(collectionName)
+  }
+  const collection = db.collection('firmware')
+
+  // log('checking for index')
+  // if (!await collection.indexExists('type_1_version_1')) {
+  //   log('Creating index...')
+  //   await collection.createIndex(['type', 'version'])
+  // }
+
+  log('Database is ready')
+  return collection
+}
+
+module.exports = async (config) => {
+  const db = await connectToFirmwareDB(config)
+  const collection = await initializeCollection(db, config)
+  const firmwareAPI = require('./api.js')(collection)
   app.use(firmwareAPI)
-  server.listen(port)
-})()
+  app.shutdown = async () => {
+    await db.close()
+  }
+  return app
+}

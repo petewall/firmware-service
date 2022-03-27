@@ -9,6 +9,8 @@
   "private": false,
   "dependencies": {
     "body-parser": "^1.19.2",
+    "bson": "^4.6.2",
+    "debug": "^4.3.4",
     "express": "^4.17.3",
     "http-status": "^1.5.0",
     "mongodb": "^4.4.1",
@@ -23,7 +25,8 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "start": "node server.js",
-    "test": "jest *.test.js"
+    "start": "node index.js",
+    "test-units": "jest test/api.test.js",
+    "test-integration": "jest --runInBand test/integration.test.js"
   }
 }

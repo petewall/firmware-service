@@ -19,4 +19,4 @@ curl \
   --fail \
   --upload-file "${firmware}" \
   --header "Content-Type: application/octet-stream" \
-  "${FIRMWARE_SERVICE:-localhost:5000}/api/firmware/${type}/${version}"
+  "${FIRMWARE_SERVICE:-localhost:5000}/${type}/${version}"

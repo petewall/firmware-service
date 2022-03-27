@@ -1,15 +1,19 @@
-const API = require('./api.js')
+const API = require('../api.js')
+const { Int32, Binary } = require('bson')
 const express = require('express')
 const status = require('http-status')
 const supertest = require('supertest')
 
 function fakeFirmware(type, version, size) {
   return {
-    type, version, size, data: `${size} bits of binary data`
+    type,
+    version,
+    size: new Int32(size),
+    data: new Binary(`${size} bits of binary data`)
   }
 }
 
-describe('API', () => {
+describe('Unit tests', () => {
   let app
   let findToArrayReturn = []
   let findOneReturn
@@ -51,12 +55,12 @@ describe('API', () => {
         type: 'bootloader',
         version: '1.2.3',
         size: 100,
-        data: '100 bits of binary data'
+        data: Buffer.from('100 bits of binary data', 'utf8').toString('base64')
       }, {
         type: 'lightswitch',
         version: '1.2.3',
         size: 100,
-        data: '100 bits of binary data'
+        data: Buffer.from('100 bits of binary data', 'utf8').toString('base64')
       }])
 
       expect(db.find.mock.calls.length).toEqual(1)
@@ -108,12 +112,12 @@ describe('API', () => {
         type: 'bootloader',
         version: '1.0.0',
         size: 100,
-        data: '100 bits of binary data'
+        data: Buffer.from('100 bits of binary data', 'utf8').toString('base64')
       }, {
         type: 'bootloader',
         version: '1.2.3',
         size: 100,
-        data: '100 bits of binary data'
+        data: Buffer.from('100 bits of binary data', 'utf8').toString('base64')
       }])
 
       expect(db.find.mock.calls.length).toEqual(1)
@@ -162,7 +166,7 @@ describe('API', () => {
         type: 'bootloader',
         version: '1.2.3',
         size: 100,
-        data: '100 bits of binary data'
+        data: Buffer.from('100 bits of binary data', 'utf8').toString('base64')
       })
 
       expect(db.findOne.mock.calls.length).toEqual(1)
@@ -201,6 +205,7 @@ describe('API', () => {
       const response = await supertest(app).get('/bootloader/1.2.3/data')
 
       expect(response.status).toEqual(status.OK)
+      expect(response.headers['content-disposition']).toEqual('attachment; filename="bootloader-1.2.3.bin"')
       expect(response.headers['content-type']).toEqual('application/octet-stream; charset=utf-8')
       expect(response.body).toEqual(
         Buffer.from('100 bits of binary data')
@@ -210,6 +215,25 @@ describe('API', () => {
       expect(db.findOne.mock.calls[0][0]).toEqual({
         type: 'bootloader',
         version: '1.2.3'
+      })
+    })
+  })
+
+  describe('GET /<type>/<version>/data (not found)', () => {
+    beforeEach(() => {
+      findOneReturn = null
+    })
+
+    it('downloads the firmware data', async () => {
+      const response = await supertest(app).get('/nothing/0.0.1-beta1/data')
+
+      expect(response.status).toEqual(status.NOT_FOUND)
+      expect(response.error.text).toEqual('no firmware found for type "nothing" with version "0.0.1-beta1"')
+
+      expect(db.findOne.mock.calls.length).toEqual(1)
+      expect(db.findOne.mock.calls[0][0]).toEqual({
+        type: 'nothing',
+        version: '0.0.1-beta1'
       })
     })
   })
@@ -232,8 +256,32 @@ describe('API', () => {
       expect(db.insertOne.mock.calls[0][0]).toEqual({
         type: 'bootloader',
         version: '2.0.0',
-        size: 'this is the new firmware content'.length,
-        data: Buffer.from('this is the new firmware content')
+        size: new Int32('this is the new firmware content'.length),
+        data: new Binary('this is the new firmware content')
+      })
+    })
+  })
+
+  describe('PUT /<type>/<version> (fails)', () => {
+    beforeEach(() => {
+      insertOneReturn = {
+        acknowledged: false
+      }
+    })
+
+    it('responds with an error', async () => {
+      const response = await supertest(app).put('/bootloader/2.0.0')
+        .set('Content-type', 'application/octet-stream')
+        .send('this is the new firmware content')
+
+      expect(response.status).toEqual(status.IM_A_TEAPOT)
+
+      expect(db.insertOne.mock.calls.length).toEqual(1)
+      expect(db.insertOne.mock.calls[0][0]).toEqual({
+        type: 'bootloader',
+        version: '2.0.0',
+        size: new Int32('this is the new firmware content'.length),
+        data: new Binary('this is the new firmware content')
       })
     })
   })
