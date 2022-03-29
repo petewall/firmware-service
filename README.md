@@ -30,3 +30,5 @@ This service is for managing a store of firmware binaries.
   * Get latest firmware for a given type `GET /<type>/latest`. `latest` becomes a protected version
 * Better error handling for rejected promises
 * Enable integration testing in CI
+* Create Dockerfile for distribution
+* Create deployment files for k8s
