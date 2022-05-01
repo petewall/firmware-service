@@ -1,16 +1,23 @@
-FROM node:16-alpine
-WORKDIR /app
+FROM golang:1.17-alpine AS builder
 
-ENV NODE_ENV=production
-ENV PORT=5000
-ENV FIRMWARE_DB_HOST=
-ENV FIRMWARE_DB_PORT=
-ENV FIRMWARE_DB_NAME=
-ENV FIRMWARE_DB_USERNAME=
-ENV FIRMWARE_DB_PASSWORD=
+WORKDIR /firmware-service
 
-COPY ["*.js", "package.json", "yarn.lock", "./"]
+COPY . /firmware-service/
 
-RUN yarn install --production
+ARG GOOS=linux
+ARG GOARCH=amd64
 
-CMD [ "node", "index.js" ]
+RUN go mod download
+RUN go build -o build/firmware-service github.com/petewall/firmware-service/v2
+
+FROM alpine
+
+WORKDIR /
+
+COPY --from=builder /firmware-service/build/firmware-service /firmware-service
+
+# ENV PORT=5050
+# ENV DB_HOST=
+# ENV DB_PORT=6379
+
+ENTRYPOINT ["/firmware-service"]
