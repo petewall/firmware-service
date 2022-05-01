@@ -69,7 +69,7 @@ build/firmware-service: $(SOURCES) deps-modules
 build: build/firmware-service
 
 build-image:
-	pack build firmware-service --env-file vars.env --builder gcr.io/buildpacks/builder:v1
+	docker build -t petewall/firmware-service .
 
 # #### RUN ####
 .PHONY: run
