@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/gorilla/handlers"
@@ -15,11 +16,19 @@ type API struct {
 	LogOutput     io.Writer
 }
 
-func sendJSON(object interface{}, w http.ResponseWriter) {
+func (a *API) logAndRespond(w http.ResponseWriter, message string, err error) {
+	_, _ = fmt.Fprint(w, message)
+	if err != nil {
+		_, _ = fmt.Fprintf(a.LogOutput, "%s: %s", message, err.Error())
+	} else {
+		_, _ = fmt.Fprintf(a.LogOutput, message)
+	}
+}
+
+func (a *API) sendJSON(object interface{}, w http.ResponseWriter) {
 	encoded, err := json.Marshal(object)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = fmt.Fprint(w, "failed to write the response")
+		a.logAndRespond(w, "failed to write the response", err)
 		return
 	}
 
@@ -31,22 +40,22 @@ func (a *API) getAllFirmware(w http.ResponseWriter, r *http.Request) {
 	firmwareList, err := a.FirmwareStore.GetAllFirmware()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = fmt.Fprint(w, "failed to request firmware list from the firmware store")
+		a.logAndRespond(w, "failed to request firmware list from the firmware store", err)
 		return
 	}
 
-	sendJSON(firmwareList, w)
+	a.sendJSON(firmwareList, w)
 }
 
 func (a *API) getFirmwareTypes(w http.ResponseWriter, r *http.Request) {
 	types, err := a.FirmwareStore.GetAllTypes()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = fmt.Fprint(w, "failed to request firmware types from the firmware store")
+		a.logAndRespond(w, "failed to request firmware types from the firmware store", err)
 		return
 	}
 
-	sendJSON(types, w)
+	a.sendJSON(types, w)
 }
 
 func (a *API) getAllFirmwareByType(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +63,7 @@ func (a *API) getAllFirmwareByType(w http.ResponseWriter, r *http.Request) {
 	firmwareList, err := a.FirmwareStore.GetAllFirmwareByType(vars["type"])
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = fmt.Fprintf(w, "failed to request firmware for type %s from the firmware store", vars["type"])
+		a.logAndRespond(w, fmt.Sprintf("failed to request firmware for type %s from the firmware store", vars["type"]), err)
 		return
 	}
 
@@ -64,7 +73,7 @@ func (a *API) getAllFirmwareByType(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendJSON(firmwareList, w)
+	a.sendJSON(firmwareList, w)
 }
 
 func (a *API) getFirmware(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +81,7 @@ func (a *API) getFirmware(w http.ResponseWriter, r *http.Request) {
 	firmware, err := a.FirmwareStore.GetFirmware(vars["type"], vars["version"])
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = fmt.Fprintf(w, "failed to request firmware %s %s from the firmware store", vars["type"], vars["version"])
+		a.logAndRespond(w, fmt.Sprintf("failed to request firmware %s %s from the firmware store", vars["type"], vars["version"]), err)
 		return
 	}
 
@@ -82,10 +91,25 @@ func (a *API) getFirmware(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sendJSON(firmware, w)
+	a.sendJSON(firmware, w)
 }
 
 func (a *API) addFirmware(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		a.logAndRespond(w, fmt.Sprintf("failed to read body of new firmware %s %s", vars["type"], vars["version"]), err)
+		return
+	}
+
+	err = a.FirmwareStore.AddFirmware(vars["type"], vars["version"], body)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		a.logAndRespond(w, fmt.Sprintf("failed to add new firmware %s %s to the firmware store", vars["type"], vars["version"]), err)
+		return
+	}
 }
 
 func (a *API) deleteFirmware(w http.ResponseWriter, r *http.Request) {
@@ -93,7 +117,7 @@ func (a *API) deleteFirmware(w http.ResponseWriter, r *http.Request) {
 	err := a.FirmwareStore.DeleteFirmware(vars["type"], vars["version"])
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = fmt.Fprintf(w, "failed to delete firmware %s %s from the firmware store", vars["type"], vars["version"])
+		a.logAndRespond(w, fmt.Sprintf("failed to delete firmware %s %s from the firmware store", vars["type"], vars["version"]), err)
 		return
 	}
 }
@@ -103,7 +127,7 @@ func (a *API) getFirmwareData(w http.ResponseWriter, r *http.Request) {
 	data, err := a.FirmwareStore.GetFirmwareData(vars["type"], vars["version"])
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = fmt.Fprintf(w, "failed to request firmware data %s %s from the firmware store", vars["type"], vars["version"])
+		a.logAndRespond(w, fmt.Sprintf("failed to request firmware data %s %s from the firmware store", vars["type"], vars["version"]), err)
 		return
 	}
 
@@ -123,7 +147,6 @@ func (a *API) GetMux() http.Handler {
 	r.HandleFunc("/", a.getAllFirmware).Methods("GET")
 	r.HandleFunc("/types", a.getFirmwareTypes).Methods("GET")
 	r.HandleFunc("/{type}", a.getAllFirmwareByType).Methods("GET")
-	// r.HandleFunc("/{type}/latest", a.getLatestFirmwareForType).Methods("GET")
 	r.HandleFunc("/{type}/{version}", a.getFirmware).Methods("GET")
 	r.HandleFunc("/{type}/{version}", a.addFirmware).Methods("PUT")
 	r.HandleFunc("/{type}/{version}", a.deleteFirmware).Methods("DELETE")

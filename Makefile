@@ -41,8 +41,8 @@ deps-modules: deps-go-binary
 	go mod download
 
 # #### SRC ####
-lib/libfakes/fake_firmware_store.go: lib/firmware-store.go deps-counterfeiter
-	go generate lib/firmware-store.go
+lib/libfakes/fake_firmware_store.go: lib/firmware_store.go
+	go generate lib/firmware_store.go
 
 # #### TEST ####
 .PHONY: lint
@@ -50,14 +50,14 @@ lib/libfakes/fake_firmware_store.go: lib/firmware-store.go deps-counterfeiter
 lint: deps-golangci-lint
 	golangci-lint run
 
-test: lib/libfakes/fake_dbinterface.go deps-modules deps-ginkgo
+test: lib/libfakes/fake_firmware_store.go deps-modules deps-ginkgo
 	ginkgo -r -skipPackage test .
 
-integration-test: deps-modules deps-ginkgo
-	ginkgo -r test/integration
+# integration-test: deps-modules deps-ginkgo
+# 	ginkgo -r test/integration
 
-test-all: lib/libfakes/fake_dbinterface.go deps-modules deps-ginkgo
-	ginkgo -r .
+# test-all: lib/libfakes/fake_dbinterface.go deps-modules deps-ginkgo
+# 	ginkgo -r .
 
 # #### BUILD ####
 .PHONY: build
