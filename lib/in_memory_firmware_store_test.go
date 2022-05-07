@@ -107,7 +107,11 @@ var _ = Describe("InMemoryFirmwareStore", func() {
 	})
 
 	Describe("AddFirmware", func() {
-		XIt("adds a new firmware", func() {})
+		It("adds a new firmware", func() {
+			err := firmwareStore.AddFirmware("clock", "1.0.0", []byte("clock firmware data"))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(firmwareStore.GetFirmware("clock", "1.0.0")).ToNot(BeNil())
+		})
 
 		Context("the firmware already exists", func() {
 			It("returns an error", func() {
@@ -119,7 +123,11 @@ var _ = Describe("InMemoryFirmwareStore", func() {
 	})
 
 	Describe("DeleteFirmware", func() {
-		XIt("deletes the firmware", func() {})
+		It("deletes the firmware", func() {
+			err := firmwareStore.DeleteFirmware("lightswitch", "3.0")
+			Expect(err).ToNot(HaveOccurred())
+			Expect(firmwareStore.GetFirmware("lightswitch", "3.0")).To(BeNil())
+		})
 
 		Context("the firmware does not exist", func() {
 			It("returns an error", func() {
