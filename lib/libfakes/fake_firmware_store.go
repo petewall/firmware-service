@@ -33,29 +33,29 @@ type FakeFirmwareStore struct {
 	deleteFirmwareReturnsOnCall map[int]struct {
 		result1 error
 	}
-	GetAllFirmwareStub        func() ([]*lib.Firmware, error)
+	GetAllFirmwareStub        func() (lib.FirmwareList, error)
 	getAllFirmwareMutex       sync.RWMutex
 	getAllFirmwareArgsForCall []struct {
 	}
 	getAllFirmwareReturns struct {
-		result1 []*lib.Firmware
+		result1 lib.FirmwareList
 		result2 error
 	}
 	getAllFirmwareReturnsOnCall map[int]struct {
-		result1 []*lib.Firmware
+		result1 lib.FirmwareList
 		result2 error
 	}
-	GetAllFirmwareByTypeStub        func(string) ([]*lib.Firmware, error)
+	GetAllFirmwareByTypeStub        func(string) (lib.FirmwareList, error)
 	getAllFirmwareByTypeMutex       sync.RWMutex
 	getAllFirmwareByTypeArgsForCall []struct {
 		arg1 string
 	}
 	getAllFirmwareByTypeReturns struct {
-		result1 []*lib.Firmware
+		result1 lib.FirmwareList
 		result2 error
 	}
 	getAllFirmwareByTypeReturnsOnCall map[int]struct {
-		result1 []*lib.Firmware
+		result1 lib.FirmwareList
 		result2 error
 	}
 	GetAllTypesStub        func() ([]string, error)
@@ -232,7 +232,7 @@ func (fake *FakeFirmwareStore) DeleteFirmwareReturnsOnCall(i int, result1 error)
 	}{result1}
 }
 
-func (fake *FakeFirmwareStore) GetAllFirmware() ([]*lib.Firmware, error) {
+func (fake *FakeFirmwareStore) GetAllFirmware() (lib.FirmwareList, error) {
 	fake.getAllFirmwareMutex.Lock()
 	ret, specificReturn := fake.getAllFirmwareReturnsOnCall[len(fake.getAllFirmwareArgsForCall)]
 	fake.getAllFirmwareArgsForCall = append(fake.getAllFirmwareArgsForCall, struct {
@@ -256,39 +256,39 @@ func (fake *FakeFirmwareStore) GetAllFirmwareCallCount() int {
 	return len(fake.getAllFirmwareArgsForCall)
 }
 
-func (fake *FakeFirmwareStore) GetAllFirmwareCalls(stub func() ([]*lib.Firmware, error)) {
+func (fake *FakeFirmwareStore) GetAllFirmwareCalls(stub func() (lib.FirmwareList, error)) {
 	fake.getAllFirmwareMutex.Lock()
 	defer fake.getAllFirmwareMutex.Unlock()
 	fake.GetAllFirmwareStub = stub
 }
 
-func (fake *FakeFirmwareStore) GetAllFirmwareReturns(result1 []*lib.Firmware, result2 error) {
+func (fake *FakeFirmwareStore) GetAllFirmwareReturns(result1 lib.FirmwareList, result2 error) {
 	fake.getAllFirmwareMutex.Lock()
 	defer fake.getAllFirmwareMutex.Unlock()
 	fake.GetAllFirmwareStub = nil
 	fake.getAllFirmwareReturns = struct {
-		result1 []*lib.Firmware
+		result1 lib.FirmwareList
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *FakeFirmwareStore) GetAllFirmwareReturnsOnCall(i int, result1 []*lib.Firmware, result2 error) {
+func (fake *FakeFirmwareStore) GetAllFirmwareReturnsOnCall(i int, result1 lib.FirmwareList, result2 error) {
 	fake.getAllFirmwareMutex.Lock()
 	defer fake.getAllFirmwareMutex.Unlock()
 	fake.GetAllFirmwareStub = nil
 	if fake.getAllFirmwareReturnsOnCall == nil {
 		fake.getAllFirmwareReturnsOnCall = make(map[int]struct {
-			result1 []*lib.Firmware
+			result1 lib.FirmwareList
 			result2 error
 		})
 	}
 	fake.getAllFirmwareReturnsOnCall[i] = struct {
-		result1 []*lib.Firmware
+		result1 lib.FirmwareList
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *FakeFirmwareStore) GetAllFirmwareByType(arg1 string) ([]*lib.Firmware, error) {
+func (fake *FakeFirmwareStore) GetAllFirmwareByType(arg1 string) (lib.FirmwareList, error) {
 	fake.getAllFirmwareByTypeMutex.Lock()
 	ret, specificReturn := fake.getAllFirmwareByTypeReturnsOnCall[len(fake.getAllFirmwareByTypeArgsForCall)]
 	fake.getAllFirmwareByTypeArgsForCall = append(fake.getAllFirmwareByTypeArgsForCall, struct {
@@ -313,7 +313,7 @@ func (fake *FakeFirmwareStore) GetAllFirmwareByTypeCallCount() int {
 	return len(fake.getAllFirmwareByTypeArgsForCall)
 }
 
-func (fake *FakeFirmwareStore) GetAllFirmwareByTypeCalls(stub func(string) ([]*lib.Firmware, error)) {
+func (fake *FakeFirmwareStore) GetAllFirmwareByTypeCalls(stub func(string) (lib.FirmwareList, error)) {
 	fake.getAllFirmwareByTypeMutex.Lock()
 	defer fake.getAllFirmwareByTypeMutex.Unlock()
 	fake.GetAllFirmwareByTypeStub = stub
@@ -326,28 +326,28 @@ func (fake *FakeFirmwareStore) GetAllFirmwareByTypeArgsForCall(i int) string {
 	return argsForCall.arg1
 }
 
-func (fake *FakeFirmwareStore) GetAllFirmwareByTypeReturns(result1 []*lib.Firmware, result2 error) {
+func (fake *FakeFirmwareStore) GetAllFirmwareByTypeReturns(result1 lib.FirmwareList, result2 error) {
 	fake.getAllFirmwareByTypeMutex.Lock()
 	defer fake.getAllFirmwareByTypeMutex.Unlock()
 	fake.GetAllFirmwareByTypeStub = nil
 	fake.getAllFirmwareByTypeReturns = struct {
-		result1 []*lib.Firmware
+		result1 lib.FirmwareList
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *FakeFirmwareStore) GetAllFirmwareByTypeReturnsOnCall(i int, result1 []*lib.Firmware, result2 error) {
+func (fake *FakeFirmwareStore) GetAllFirmwareByTypeReturnsOnCall(i int, result1 lib.FirmwareList, result2 error) {
 	fake.getAllFirmwareByTypeMutex.Lock()
 	defer fake.getAllFirmwareByTypeMutex.Unlock()
 	fake.GetAllFirmwareByTypeStub = nil
 	if fake.getAllFirmwareByTypeReturnsOnCall == nil {
 		fake.getAllFirmwareByTypeReturnsOnCall = make(map[int]struct {
-			result1 []*lib.Firmware
+			result1 lib.FirmwareList
 			result2 error
 		})
 	}
 	fake.getAllFirmwareByTypeReturnsOnCall[i] = struct {
-		result1 []*lib.Firmware
+		result1 lib.FirmwareList
 		result2 error
 	}{result1, result2}
 }

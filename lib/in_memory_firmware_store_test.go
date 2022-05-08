@@ -77,7 +77,7 @@ var _ = Describe("InMemoryFirmwareStore", func() {
 			Expect(err).ToNot(HaveOccurred())
 			Expect(firmware.Type).To(Equal("bootstrap"))
 			Expect(firmware.Version).To(Equal("1.2.3"))
-			expectedLength := len([]byte("bootstrap 1.2.3 data"))
+			expectedLength := int64(len([]byte("bootstrap 1.2.3 data")))
 			Expect(firmware.Size).To(Equal(expectedLength))
 		})
 

@@ -14,7 +14,7 @@ func TestLib(t *testing.T) {
 	RunSpecs(t, "Lib unit test suite")
 }
 
-func MakeFirmware(firmwareType, firmwareVersion string, size int) *Firmware {
+func MakeFirmware(firmwareType, firmwareVersion string, size int64) *Firmware {
 	return &Firmware{
 		Type:    firmwareType,
 		Version: firmwareVersion,

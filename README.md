@@ -20,8 +20,5 @@ This service is for managing a store of firmware binaries.
 
 ## TODO
 
-* Test in-memory firmware store
-* Implement file system firmware store
-* Implement cli switches to choose firmware store
-* Implement FS-based integration tests
+* Wholistic testing in filesystem tests?
 * Get testing in CI

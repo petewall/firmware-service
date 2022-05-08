@@ -258,7 +258,7 @@ var _ = Describe("API", func() {
 			firmware := readFirmware(res.Body)
 			Expect(firmware.Type).To(Equal("bootstrap"))
 			Expect(firmware.Version).To(Equal("1.2.3"))
-			Expect(firmware.Size).To(Equal(100))
+			Expect(firmware.Size).To(Equal(int64(100)))
 
 			Expect(firmwareStore.GetFirmwareCallCount()).To(Equal(1))
 			firmwareType, firmwareVersion := firmwareStore.GetFirmwareArgsForCall(0)

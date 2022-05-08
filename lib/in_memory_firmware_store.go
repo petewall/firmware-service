@@ -3,30 +3,20 @@ package lib
 import "fmt"
 
 type InMemoryFirmwareStore struct {
-	firmware     []*Firmware
+	firmware     FirmwareList
 	firmwareData [][]byte
 }
 
-func (fs *InMemoryFirmwareStore) GetAllFirmware() ([]*Firmware, error) {
+func (fs *InMemoryFirmwareStore) GetAllFirmware() (FirmwareList, error) {
 	return fs.firmware, nil
 }
 
 func (fs *InMemoryFirmwareStore) GetAllTypes() ([]string, error) {
-	typesMap := map[string]bool{}
-	for _, firmware := range fs.firmware {
-		typesMap[firmware.Type] = true
-	}
-
-	types := make([]string, 0, len(typesMap))
-	for key := range typesMap {
-		types = append(types, key)
-	}
-
-	return types, nil
+	return fs.firmware.GetUniqueTypes(), nil
 }
 
-func (fs *InMemoryFirmwareStore) GetAllFirmwareByType(firmwareType string) ([]*Firmware, error) {
-	var result []*Firmware
+func (fs *InMemoryFirmwareStore) GetAllFirmwareByType(firmwareType string) (FirmwareList, error) {
+	var result FirmwareList
 	for _, firmware := range fs.firmware {
 		if firmware.Type == firmwareType {
 			result = append(result, firmware)
