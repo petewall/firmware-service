@@ -16,7 +16,7 @@ func (firmwareStore *FilesystemFirmwareStore) walk(path string) (FirmwareList, e
 	var firmware FirmwareList
 	err := filepath.WalkDir(path, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
-			return err
+			return fmt.Errorf("an error ocurred during walking the firmware store file system: %w", err)
 		}
 
 		if info.IsDir() {
@@ -25,7 +25,7 @@ func (firmwareStore *FilesystemFirmwareStore) walk(path string) (FirmwareList, e
 
 		relative, err := filepath.Rel(firmwareStore.Path, path)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to parse the relative directory structure of %s and %s: %w", path, firmwareStore.Path, err)
 		}
 
 		firmwareInfo, err := info.Info()
