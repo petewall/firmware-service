@@ -5,7 +5,7 @@ package lib
 type Firmware struct {
 	Type    string `json:"type"`
 	Version string `json:"version"`
-	Size    int    `json:"size"`
+	Size    int64  `json:"size"`
 }
 
 //counterfeiter:generate . FirmwareStore
@@ -17,4 +17,16 @@ type FirmwareStore interface {
 	GetFirmwareData(firmwareType, firmwareVersion string) ([]byte, error)
 	AddFirmware(firmwareType, firmwareVersion string, data []byte) error
 	DeleteFirmware(firmwareType, firmwareVersion string) error
+}
+
+const (
+	ReservedWordTypes = "types"
+)
+
+func IsInvalidType(firmwareType string) bool {
+	if firmwareType == ReservedWordTypes {
+		return true
+	}
+
+	return false
 }

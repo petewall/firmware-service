@@ -62,7 +62,7 @@ func (fs *InMemoryFirmwareStore) AddFirmware(firmwareType, firmwareVersion strin
 	fs.firmware = append(fs.firmware, &Firmware{
 		Type:    firmwareType,
 		Version: firmwareVersion,
-		Size:    len(data),
+		Size:    int64(len(data)),
 	})
 	fs.firmwareData = append(fs.firmwareData, data)
 

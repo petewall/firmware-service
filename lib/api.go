@@ -97,7 +97,7 @@ func (a *API) getFirmware(w http.ResponseWriter, r *http.Request) {
 func (a *API) addFirmware(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	if vars["type"] == "types" {
+	if IsInvalidType(vars["type"]) {
 		w.WriteHeader(http.StatusBadRequest)
 		_, _ = fmt.Fprintf(w, "\"%s\" is not a valid firmware type", vars["type"])
 		return
