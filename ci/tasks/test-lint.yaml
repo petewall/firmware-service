@@ -1,17 +1,16 @@
 ---
 platform: linux
 
+image_resource:
+  type: registry-image
+  source:
+    repository: golangci/golangci-lint
+    tag: v1.45.2
+
 inputs:
   - name: source
 
-caches:
-  - path: source/node-modules
-
 run:
-  path: bash
+  path: /usr/bin/golangci-lint
   dir: source
-  args:
-    - -exc
-    - |
-      yarn install
-      yarn lint
+  args: [ run, --color, always, --verbose ]

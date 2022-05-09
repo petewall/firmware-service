@@ -10,9 +10,9 @@ var _ = Describe("InMemoryFirmwareStore", func() {
 	var firmwareStore *InMemoryFirmwareStore
 	BeforeEach(func() {
 		firmwareStore = &InMemoryFirmwareStore{}
-		firmwareStore.AddFirmware("bootstrap", "1.2.3", []byte("bootstrap 1.2.3 data"))
-		firmwareStore.AddFirmware("bootstrap", "1.0.0-rc2", []byte("bootstrap 1.0.0-rc2 data"))
-		firmwareStore.AddFirmware("lightswitch", "3.0", []byte("lightswitch 3.0 data"))
+		Expect(firmwareStore.AddFirmware("bootstrap", "1.2.3", []byte("bootstrap 1.2.3 data"))).ToNot(HaveOccurred())
+		Expect(firmwareStore.AddFirmware("bootstrap", "1.0.0-rc2", []byte("bootstrap 1.0.0-rc2 data"))).ToNot(HaveOccurred())
+		Expect(firmwareStore.AddFirmware("lightswitch", "3.0", []byte("lightswitch 3.0 data"))).ToNot(HaveOccurred())
 	})
 
 	Describe("GetAllFirmware", func() {

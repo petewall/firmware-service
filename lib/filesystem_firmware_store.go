@@ -16,7 +16,7 @@ func (firmwareStore *FilesystemFirmwareStore) walk(path string) (FirmwareList, e
 	var firmware FirmwareList
 	err := filepath.WalkDir(path, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
-			return fmt.Errorf("an error ocurred during walking the firmware store file system: %w", err)
+			return err
 		}
 
 		if info.IsDir() {

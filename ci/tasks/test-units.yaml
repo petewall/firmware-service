@@ -4,14 +4,11 @@ platform: linux
 inputs:
   - name: source
 
-caches:
-  - path: source/node-modules
-
 run:
-  path: bash
+  path: sh
   dir: source
   args:
     - -exc
     - |
-      yarn install
-      yarn test-units
+      apk add --update g++ make
+      make test
