@@ -13,7 +13,7 @@ type FilesystemFirmwareStore struct {
 }
 
 func (firmwareStore *FilesystemFirmwareStore) walk(path string) (FirmwareList, error) {
-	var firmware FirmwareList
+	firmware := FirmwareList{}
 	err := filepath.WalkDir(path, func(path string, info fs.DirEntry, err error) error {
 		if err != nil {
 			return err

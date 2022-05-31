@@ -7,6 +7,13 @@ type InMemoryFirmwareStore struct {
 	firmwareData [][]byte
 }
 
+func NewInMemoryFirmwareStore() *InMemoryFirmwareStore {
+	return &InMemoryFirmwareStore{
+		firmware:     []*Firmware{},
+		firmwareData: [][]byte{},
+	}
+}
+
 func (fs *InMemoryFirmwareStore) GetAllFirmware() (FirmwareList, error) {
 	return fs.firmware, nil
 }

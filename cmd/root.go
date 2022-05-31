@@ -47,7 +47,7 @@ var rootCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var firmwareStore FirmwareStore
 		if viper.GetString("store.type") == StoreTypeInMemory {
-			firmwareStore = &InMemoryFirmwareStore{}
+			firmwareStore = NewInMemoryFirmwareStore()
 		} else if viper.GetString("store.type") == StoreTypeFilesystem {
 			firmwareStore = &FilesystemFirmwareStore{
 				Path: viper.GetString("store.path"),
