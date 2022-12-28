@@ -20,7 +20,9 @@ run:
     - -exc
     - |
       curl \
+        -X PUT \
         --fail \
         --upload-file binaries/*.bin \
         --header "Content-Type: application/octet-stream" \
+        --insecure \
         "${FIRMWARE_SERVICE}/${TYPE}/$(cat version/version)"
