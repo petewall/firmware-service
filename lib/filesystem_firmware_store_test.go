@@ -2,7 +2,6 @@ package lib_test
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -12,7 +11,7 @@ import (
 )
 
 func buildTestStoreStructure(firmwareList []*Firmware) string {
-	firmwareStorePath, err := ioutil.TempDir("", "firmware-store-*")
+	firmwareStorePath, err := os.MkdirTemp("", "firmware-store-*")
 	Expect(err).ToNot(HaveOccurred())
 
 	for _, firmware := range firmwareList {
@@ -23,7 +22,7 @@ func buildTestStoreStructure(firmwareList []*Firmware) string {
 		}
 
 		firmwareFile := filepath.Join(firmwareStorePath, firmware.Type, firmware.Version)
-		err = ioutil.WriteFile(firmwareFile, bytes.Repeat([]byte("*"), int(firmware.Size)), 0644)
+		err = os.WriteFile(firmwareFile, bytes.Repeat([]byte("*"), int(firmware.Size)), 0644)
 		Expect(err).ToNot(HaveOccurred())
 	}
 
