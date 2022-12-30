@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 
@@ -17,7 +16,7 @@ import (
 )
 
 func readFirmwareList(body io.Reader) []*Firmware {
-	bodyBytes, err := ioutil.ReadAll(body)
+	bodyBytes, err := io.ReadAll(body)
 	Expect(err).ToNot(HaveOccurred())
 	var firmwareList []*Firmware
 	err = json.Unmarshal(bodyBytes, &firmwareList)
@@ -26,7 +25,7 @@ func readFirmwareList(body io.Reader) []*Firmware {
 }
 
 func readFirmware(body io.Reader) *Firmware {
-	bodyBytes, err := ioutil.ReadAll(body)
+	bodyBytes, err := io.ReadAll(body)
 	Expect(err).ToNot(HaveOccurred())
 	var firmware *Firmware
 	err = json.Unmarshal(bodyBytes, &firmware)
@@ -35,7 +34,7 @@ func readFirmware(body io.Reader) *Firmware {
 }
 
 func readTypesList(body io.Reader) []string {
-	bodyBytes, err := ioutil.ReadAll(body)
+	bodyBytes, err := io.ReadAll(body)
 	Expect(err).ToNot(HaveOccurred())
 	var types []string
 	err = json.Unmarshal(bodyBytes, &types)
@@ -390,9 +389,7 @@ var _ = Describe("API", func() {
 			firmwareStore.DeleteFirmwareReturns(nil)
 		})
 		It("deletes the specific firmware", func() {
-			req, err := http.NewRequest("DELETE", "/bootstrap/1.2.3", nil)
-			Expect(err).ToNot(HaveOccurred())
-
+			req := httptest.NewRequest(http.MethodDelete, "/bootstrap/1.2.3", nil)
 			api.GetMux().ServeHTTP(res, req)
 			Expect(res.Code).To(Equal(http.StatusOK))
 
@@ -407,9 +404,7 @@ var _ = Describe("API", func() {
 				firmwareStore.DeleteFirmwareReturns(errors.New("delete firmware failed"))
 			})
 			It("returns error 500", func() {
-				req, err := http.NewRequest("DELETE", "/bootstrap/1.2.3", nil)
-				Expect(err).ToNot(HaveOccurred())
-
+				req := httptest.NewRequest(http.MethodDelete, "/bootstrap/1.2.3", nil)
 				api.GetMux().ServeHTTP(res, req)
 				Expect(res.Code).To(Equal(http.StatusInternalServerError))
 				Expect(res.Body.String()).To(Equal("failed to delete firmware bootstrap 1.2.3 from the firmware store"))
@@ -423,6 +418,26 @@ var _ = Describe("API", func() {
 				Expect(firmwareVersion).To(Equal("1.2.3"))
 			})
 		})
+
+		When("the firmware store returns a not found error", func() {
+			BeforeEach(func() {
+				firmwareStore.DeleteFirmwareReturns(errors.New("firmware does not exist"))
+			})
+			It("returns error 200", func() {
+				req := httptest.NewRequest(http.MethodDelete, "/bootstrap/1.2.3", nil)
+				api.GetMux().ServeHTTP(res, req)
+				Expect(res.Code).To(Equal(http.StatusOK))
+				By("logging the attempt", func() {
+					Expect(log).To(Say("attempt to delete missing firmware bootstrap 1.2.3: firmware does not exist"))
+				})
+
+				Expect(firmwareStore.DeleteFirmwareCallCount()).To(Equal(1))
+				firmwareType, firmwareVersion := firmwareStore.DeleteFirmwareArgsForCall(0)
+				Expect(firmwareType).To(Equal("bootstrap"))
+				Expect(firmwareVersion).To(Equal("1.2.3"))
+			})
+		})
+
 	})
 
 	Describe("GET /<type>/<version>/data", func() {

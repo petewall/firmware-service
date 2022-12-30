@@ -18,9 +18,5 @@ const (
 )
 
 func IsInvalidType(firmwareType string) bool {
-	if firmwareType == ReservedWordTypes {
-		return true
-	}
-
-	return false
+	return firmwareType == ReservedWordTypes
 }

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -21,7 +21,7 @@ func (a *API) logAndRespond(w http.ResponseWriter, message string, err error) {
 	if err != nil {
 		_, _ = fmt.Fprintf(a.LogOutput, "%s: %s", message, err.Error())
 	} else {
-		_, _ = fmt.Fprintf(a.LogOutput, message)
+		_, _ = fmt.Fprint(a.LogOutput, message)
 	}
 }
 
@@ -103,7 +103,7 @@ func (a *API) addFirmware(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		a.logAndRespond(w, fmt.Sprintf("failed to read body of new firmware %s %s", vars["type"], vars["version"]), err)
@@ -122,8 +122,13 @@ func (a *API) deleteFirmware(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	err := a.FirmwareStore.DeleteFirmware(vars["type"], vars["version"])
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		a.logAndRespond(w, fmt.Sprintf("failed to delete firmware %s %s from the firmware store", vars["type"], vars["version"]), err)
+		if strings.Contains(err.Error(), "does not exist") {
+			w.WriteHeader(http.StatusOK)
+			_, _ = fmt.Fprintf(a.LogOutput, "attempt to delete missing firmware %s %s: %s", vars["type"], vars["version"], err.Error())
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+			a.logAndRespond(w, fmt.Sprintf("failed to delete firmware %s %s from the firmware store", vars["type"], vars["version"]), err)
+		}
 		return
 	}
 }

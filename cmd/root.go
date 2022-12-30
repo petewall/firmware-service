@@ -84,4 +84,6 @@ func init() {
 	rootCmd.Flags().String("firmware-store-path", "", "Path for file system firmware store.")
 	_ = viper.BindPFlag("store.path", rootCmd.Flags().Lookup("firmware-store-path"))
 	_ = viper.BindEnv("store.path", "FILESYSTEM_FIRMWARE_STORE_PATH")
+
+	rootCmd.SetOut(rootCmd.OutOrStdout())
 }

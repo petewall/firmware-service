@@ -3,7 +3,6 @@ package lib
 import (
 	"fmt"
 	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -97,7 +96,7 @@ func (firmwareStore *FilesystemFirmwareStore) GetFirmware(firmwareType, firmware
 
 func (firmwareStore *FilesystemFirmwareStore) GetFirmwareData(firmwareType, firmwareVersion string) ([]byte, error) {
 	firmwareFile := filepath.Join(firmwareStore.Path, firmwareType, firmwareVersion)
-	data, err := ioutil.ReadFile(firmwareFile)
+	data, err := os.ReadFile(firmwareFile)
 	if os.IsNotExist(err) {
 		return []byte{}, nil
 	}
@@ -122,7 +121,7 @@ func (firmwareStore *FilesystemFirmwareStore) AddFirmware(firmwareType, firmware
 		return fmt.Errorf("failed to check firmware %s %s: %w", firmwareType, firmwareVersion, err)
 	}
 
-	err = ioutil.WriteFile(firmwareFile, data, 0644)
+	err = os.WriteFile(firmwareFile, data, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write firmware %s %s: %w", firmwareType, firmwareVersion, err)
 	}
