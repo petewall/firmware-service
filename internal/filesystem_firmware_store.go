@@ -1,10 +1,12 @@
-package lib
+package internal
 
 import (
 	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
+
+	. "github.com/petewall/firmware-service/v2/lib"
 )
 
 type FilesystemFirmwareStore struct {

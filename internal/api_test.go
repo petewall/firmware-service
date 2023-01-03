@@ -1,4 +1,4 @@
-package lib_test
+package internal_test
 
 import (
 	"bytes"
@@ -11,8 +11,10 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gbytes"
+	. "github.com/petewall/firmware-service/v2/internal"
 	. "github.com/petewall/firmware-service/v2/lib"
 	. "github.com/petewall/firmware-service/v2/lib/libfakes"
+	. "github.com/petewall/firmware-service/v2/test"
 )
 
 func readFirmwareList(body io.Reader) []*Firmware {

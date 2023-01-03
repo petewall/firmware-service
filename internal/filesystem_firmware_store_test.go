@@ -1,4 +1,4 @@
-package lib_test
+package internal_test
 
 import (
 	"bytes"
@@ -7,6 +7,7 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	. "github.com/petewall/firmware-service/v2/internal"
 	. "github.com/petewall/firmware-service/v2/lib"
 )
 

@@ -1,6 +1,10 @@
-package lib
+package internal
 
-import "fmt"
+import (
+	"fmt"
+
+	. "github.com/petewall/firmware-service/v2/lib"
+)
 
 type InMemoryFirmwareStore struct {
 	firmware     FirmwareList

@@ -1,4 +1,4 @@
-package lib
+package internal
 
 import (
 	"encoding/json"
@@ -9,6 +9,8 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+
+	. "github.com/petewall/firmware-service/v2/lib"
 )
 
 type API struct {
