@@ -10,5 +10,5 @@ run:
   args:
     - -exc
     - |
-      apk add bash make
+      apk add bash curl make
       make test
