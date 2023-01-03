@@ -12,8 +12,8 @@ import (
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gbytes"
 	. "github.com/petewall/firmware-service/v2/internal"
+	. "github.com/petewall/firmware-service/v2/internal/internalfakes"
 	. "github.com/petewall/firmware-service/v2/lib"
-	. "github.com/petewall/firmware-service/v2/lib/libfakes"
 	. "github.com/petewall/firmware-service/v2/test"
 )
 
