@@ -28,7 +28,7 @@ internal/internalfakes/fake_firmware_store.go: internal/firmware_store.go deps-c
 # #### TEST ####
 .PHONY: lint test-units test-features test
 
-lint:
+lint: deps-modules
 ifndef HAS_GOLANGCI_LINT
 ifeq ($(PLATFORM), Darwin)
 	brew install golangci-lint
