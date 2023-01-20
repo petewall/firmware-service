@@ -7,8 +7,8 @@ COPY . /firmware-service/
 ARG GOOS=linux
 ARG GOARCH=amd64
 
-RUN apk add bash curl make && \
-    make build
+RUN apk add bash make
+RUN make build
 
 FROM alpine
 
