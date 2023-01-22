@@ -1,7 +1,6 @@
 package lib_test
 
 import (
-	"encoding/json"
 	"net/http"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -13,8 +12,9 @@ import (
 
 var _ = Describe("Client", func() {
 	var (
-		client *lib.Client
-		server *ghttp.Server
+		client     *lib.Client
+		server     *ghttp.Server
+		statusCode int
 	)
 
 	BeforeEach(func() {
@@ -30,7 +30,7 @@ var _ = Describe("Client", func() {
 
 	Describe("GetAllFirmware", func() {
 		BeforeEach(func() {
-			response := lib.FirmwareList{
+			firmwareList := lib.FirmwareList{
 				&lib.Firmware{
 					Type:    "bootstrap",
 					Version: "1.2.3",
@@ -42,33 +42,31 @@ var _ = Describe("Client", func() {
 					Size:    1000,
 				},
 			}
-			encoded, err := json.Marshal(response)
-			Expect(err).ToNot(HaveOccurred())
 
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
 					ghttp.VerifyRequest("GET", "/"),
-					ghttp.RespondWith(http.StatusOK, encoded),
+					ghttp.RespondWithJSONEncodedPtr(&statusCode, &firmwareList),
 				),
 			)
 		})
 
-		It("sends the right request", func() {
-			firmwareList, err := client.GetAllFirmware()
-			Expect(err).ToNot(HaveOccurred())
-			Expect(server.ReceivedRequests()).To(HaveLen(1))
-			Expect(firmwareList).To(HaveLen(2))
+		When("the request succeeds", func() {
+			BeforeEach(func() {
+				statusCode = http.StatusOK
+			})
+
+			It("sends the right request", func() {
+				firmwareList, err := client.GetAllFirmware()
+				Expect(err).ToNot(HaveOccurred())
+				Expect(server.ReceivedRequests()).To(HaveLen(1))
+				Expect(firmwareList).To(HaveLen(2))
+			})
 		})
 
 		When("the request fails", func() {
 			BeforeEach(func() {
-				server.Reset()
-				server.AppendHandlers(
-					ghttp.CombineHandlers(
-						ghttp.VerifyRequest("GET", "/"),
-						ghttp.RespondWith(http.StatusTeapot, "I'm a little teapot"),
-					),
-				)
+				statusCode = http.StatusTeapot
 			})
 
 			It("returns an error", func() {
@@ -81,36 +79,32 @@ var _ = Describe("Client", func() {
 
 	Describe("GetFirmwareTypes", func() {
 		BeforeEach(func() {
-			response := []string{
-				"bootstrap", "lightswitch",
-			}
-			encoded, err := json.Marshal(response)
-			Expect(err).ToNot(HaveOccurred())
+			firmwareTypes := []string{"bootstrap", "lightswitch"}
 
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
 					ghttp.VerifyRequest("GET", "/types"),
-					ghttp.RespondWith(http.StatusOK, encoded),
+					ghttp.RespondWithJSONEncodedPtr(&statusCode, &firmwareTypes),
 				),
 			)
 		})
 
-		It("sends the right request", func() {
-			types, err := client.GetFirmwareTypes()
-			Expect(err).ToNot(HaveOccurred())
-			Expect(server.ReceivedRequests()).To(HaveLen(1))
-			Expect(types).To(HaveLen(2))
+		When("the request succeeds", func() {
+			BeforeEach(func() {
+				statusCode = http.StatusOK
+			})
+
+			It("sends the right request", func() {
+				types, err := client.GetFirmwareTypes()
+				Expect(err).ToNot(HaveOccurred())
+				Expect(server.ReceivedRequests()).To(HaveLen(1))
+				Expect(types).To(HaveLen(2))
+			})
 		})
 
 		When("the request fails", func() {
 			BeforeEach(func() {
-				server.Reset()
-				server.AppendHandlers(
-					ghttp.CombineHandlers(
-						ghttp.VerifyRequest("GET", "/types"),
-						ghttp.RespondWith(http.StatusTeapot, "I'm a little teapot"),
-					),
-				)
+				statusCode = http.StatusTeapot
 			})
 
 			It("returns an error", func() {
@@ -123,7 +117,7 @@ var _ = Describe("Client", func() {
 
 	Describe("GetFirmwareByType", func() {
 		BeforeEach(func() {
-			response := lib.FirmwareList{
+			firmwareList := lib.FirmwareList{
 				&lib.Firmware{
 					Type:    "bootstrap",
 					Version: "1.2.3",
@@ -135,33 +129,31 @@ var _ = Describe("Client", func() {
 					Size:    1000,
 				},
 			}
-			encoded, err := json.Marshal(response)
-			Expect(err).ToNot(HaveOccurred())
 
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
 					ghttp.VerifyRequest("GET", "/bootstrap"),
-					ghttp.RespondWith(http.StatusOK, encoded),
+					ghttp.RespondWithJSONEncodedPtr(&statusCode, &firmwareList),
 				),
 			)
 		})
 
-		It("sends the right request", func() {
-			firmwareList, err := client.GetFirmwareByType("bootstrap")
-			Expect(err).ToNot(HaveOccurred())
-			Expect(server.ReceivedRequests()).To(HaveLen(1))
-			Expect(firmwareList).To(HaveLen(2))
+		When("the request succeeds", func() {
+			BeforeEach(func() {
+				statusCode = http.StatusOK
+			})
+
+			It("sends the right request", func() {
+				firmwareList, err := client.GetFirmwareByType("bootstrap")
+				Expect(err).ToNot(HaveOccurred())
+				Expect(server.ReceivedRequests()).To(HaveLen(1))
+				Expect(firmwareList).To(HaveLen(2))
+			})
 		})
 
 		When("the request fails", func() {
 			BeforeEach(func() {
-				server.Reset()
-				server.AppendHandlers(
-					ghttp.CombineHandlers(
-						ghttp.VerifyRequest("GET", "/bootstrap"),
-						ghttp.RespondWith(http.StatusTeapot, "I'm a little teapot"),
-					),
-				)
+				statusCode = http.StatusTeapot
 			})
 
 			It("returns an error", func() {
@@ -174,38 +166,36 @@ var _ = Describe("Client", func() {
 
 	Describe("GetFirmware", func() {
 		BeforeEach(func() {
-			response := &lib.Firmware{
+			firmware := &lib.Firmware{
 				Type:    "bootstrap",
 				Version: "1.2.3",
 				Size:    1000,
 			}
-			encoded, err := json.Marshal(response)
-			Expect(err).ToNot(HaveOccurred())
 
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
 					ghttp.VerifyRequest("GET", "/bootstrap/1.2.3"),
-					ghttp.RespondWith(http.StatusOK, encoded),
+					ghttp.RespondWithJSONEncodedPtr(&statusCode, &firmware),
 				),
 			)
 		})
 
-		It("sends the right request", func() {
-			firmware, err := client.GetFirmware("bootstrap", "1.2.3")
-			Expect(err).ToNot(HaveOccurred())
-			Expect(server.ReceivedRequests()).To(HaveLen(1))
-			Expect(firmware).ToNot(BeNil())
+		When("the request succeeds", func() {
+			BeforeEach(func() {
+				statusCode = http.StatusOK
+			})
+
+			It("sends the right request", func() {
+				firmware, err := client.GetFirmware("bootstrap", "1.2.3")
+				Expect(err).ToNot(HaveOccurred())
+				Expect(server.ReceivedRequests()).To(HaveLen(1))
+				Expect(firmware).ToNot(BeNil())
+			})
 		})
 
 		When("the request fails", func() {
 			BeforeEach(func() {
-				server.Reset()
-				server.AppendHandlers(
-					ghttp.CombineHandlers(
-						ghttp.VerifyRequest("GET", "/bootstrap/1.2.3"),
-						ghttp.RespondWith(http.StatusTeapot, "I'm a little teapot"),
-					),
-				)
+				statusCode = http.StatusTeapot
 			})
 
 			It("returns an error", func() {
@@ -219,25 +209,29 @@ var _ = Describe("Client", func() {
 	Describe("AddFirmware", func() {
 		BeforeEach(func() {
 			server.AppendHandlers(
-				ghttp.VerifyRequest("PUT", "/bootstrap/1.2.3"),
+				ghttp.CombineHandlers(
+					ghttp.VerifyRequest("PUT", "/bootstrap/1.2.3"),
+					ghttp.VerifyBody([]byte("this is my firmware data")),
+					ghttp.RespondWithPtr(&statusCode, nil),
+				),
 			)
 		})
 
-		It("sends the right request", func() {
-			err := client.AddFirmware("bootstrap", "1.2.3", []byte("this is my firmware data"))
-			Expect(err).ToNot(HaveOccurred())
-			Expect(server.ReceivedRequests()).To(HaveLen(1))
+		When("the request succeeds", func() {
+			BeforeEach(func() {
+				statusCode = http.StatusOK
+			})
+
+			It("sends the right request", func() {
+				err := client.AddFirmware("bootstrap", "1.2.3", []byte("this is my firmware data"))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(server.ReceivedRequests()).To(HaveLen(1))
+			})
 		})
 
 		When("the request fails", func() {
 			BeforeEach(func() {
-				server.Reset()
-				server.AppendHandlers(
-					ghttp.CombineHandlers(
-						ghttp.VerifyRequest("PUT", "/bootstrap/1.2.3"),
-						ghttp.RespondWith(http.StatusTeapot, "I'm a little teapot"),
-					),
-				)
+				statusCode = http.StatusTeapot
 			})
 
 			It("returns an error", func() {
@@ -251,25 +245,28 @@ var _ = Describe("Client", func() {
 	Describe("DeleteFirmware", func() {
 		BeforeEach(func() {
 			server.AppendHandlers(
-				ghttp.VerifyRequest("DELETE", "/bootstrap/1.2.3"),
+				ghttp.CombineHandlers(
+					ghttp.VerifyRequest("DELETE", "/bootstrap/1.2.3"),
+					ghttp.RespondWithPtr(&statusCode, nil),
+				),
 			)
 		})
 
-		It("sends the right request", func() {
-			err := client.DeleteFirmware("bootstrap", "1.2.3")
-			Expect(err).ToNot(HaveOccurred())
-			Expect(server.ReceivedRequests()).To(HaveLen(1))
+		When("the request succeeds", func() {
+			BeforeEach(func() {
+				statusCode = http.StatusOK
+			})
+
+			It("sends the right request", func() {
+				err := client.DeleteFirmware("bootstrap", "1.2.3")
+				Expect(err).ToNot(HaveOccurred())
+				Expect(server.ReceivedRequests()).To(HaveLen(1))
+			})
 		})
 
 		When("the request fails", func() {
 			BeforeEach(func() {
-				server.Reset()
-				server.AppendHandlers(
-					ghttp.CombineHandlers(
-						ghttp.VerifyRequest("DELETE", "/bootstrap/1.2.3"),
-						ghttp.RespondWith(http.StatusTeapot, "I'm a little teapot"),
-					),
-				)
+				statusCode = http.StatusTeapot
 			})
 
 			It("returns an error", func() {
@@ -282,30 +279,31 @@ var _ = Describe("Client", func() {
 
 	Describe("GetFirmwareData", func() {
 		BeforeEach(func() {
+			data := []byte("this is my firmware data")
 			server.AppendHandlers(
 				ghttp.CombineHandlers(
 					ghttp.VerifyRequest("GET", "/bootstrap/1.2.3/data"),
-					ghttp.RespondWith(http.StatusOK, []byte("this is my firmware data")),
+					ghttp.RespondWithPtr(&statusCode, &data),
 				),
 			)
 		})
 
-		It("sends the right request", func() {
-			data, err := client.GetFirmwareData("bootstrap", "1.2.3")
-			Expect(err).ToNot(HaveOccurred())
-			Expect(server.ReceivedRequests()).To(HaveLen(1))
-			Expect(data).ToNot(BeEmpty())
+		When("the request succeeds", func() {
+			BeforeEach(func() {
+				statusCode = http.StatusOK
+			})
+
+			It("sends the right request", func() {
+				data, err := client.GetFirmwareData("bootstrap", "1.2.3")
+				Expect(err).ToNot(HaveOccurred())
+				Expect(server.ReceivedRequests()).To(HaveLen(1))
+				Expect(data).ToNot(BeEmpty())
+			})
 		})
 
 		When("the request fails", func() {
 			BeforeEach(func() {
-				server.Reset()
-				server.AppendHandlers(
-					ghttp.CombineHandlers(
-						ghttp.VerifyRequest("GET", "/bootstrap/1.2.3/data"),
-						ghttp.RespondWith(http.StatusTeapot, "I'm a little teapot"),
-					),
-				)
+				statusCode = http.StatusTeapot
 			})
 
 			It("returns an error", func() {
