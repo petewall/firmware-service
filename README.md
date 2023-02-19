@@ -4,21 +4,15 @@ This service is for managing a store of firmware binaries.
 
 ## API
 
-### `GET /`
-
-### `GET /types`
-
-### `GET /<type>`
-
-### `GET /<type>/<version>`
-
-### `GET /<type>/<version>/data`
-
-### `PUT /<type>/<version>`
-
-### `DELETE /<type>/<version>`
+* `GET /` - Get all firmware
+* `GET /types` - Get all firmware types
+* `GET /<type>` - Get all firmware by type
+* `GET /<type>/<version>` - Get firmware by type and version
+* `GET /<type>/<version>/data` - Download firmware data
+* `PUT /<type>/<version>` - Upload new firmware
+* `DELETE /<type>/<version>` - Delete firmware
 
 ## TODO
 
-* Wholistic testing in filesystem tests?
+* Holistic testing in filesystem tests?
 * Get testing in CI
