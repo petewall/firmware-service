@@ -2,8 +2,6 @@ package internal
 
 import . "github.com/petewall/firmware-service/v2/lib"
 
-//go:generate counterfeiter -generate
-
 //counterfeiter:generate . FirmwareStore
 type FirmwareStore interface {
 	GetAllFirmware() (FirmwareList, error)
