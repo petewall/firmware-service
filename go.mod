@@ -1,6 +1,6 @@
-module github.com/petewall/firmware-service/v2
+module github.com/petewall/firmware-service
 
-go 1.18
+go 1.19
 
 require (
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0

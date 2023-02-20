@@ -10,7 +10,7 @@ import (
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gbytes"
 	"github.com/onsi/gomega/gexec"
-	"github.com/petewall/firmware-service/v2/lib"
+	"github.com/petewall/firmware-service/lib"
 	"github.com/phayes/freeport"
 )
 
@@ -28,7 +28,7 @@ var (
 
 var _ = BeforeSuite(func() {
 	var err error
-	firmwareService, err = gexec.Build("github.com/petewall/firmware-service/v2")
+	firmwareService, err = gexec.Build("github.com/petewall/firmware-service")
 	Expect(err).ToNot(HaveOccurred())
 })
 

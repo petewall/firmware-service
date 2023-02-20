@@ -3,7 +3,7 @@ package internal_test
 import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	. "github.com/petewall/firmware-service/v2/internal"
+	. "github.com/petewall/firmware-service/internal"
 )
 
 var _ = Describe("InMemoryFirmwareStore", func() {

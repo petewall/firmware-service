@@ -4,8 +4,8 @@ package internalfakes
 import (
 	"sync"
 
-	"github.com/petewall/firmware-service/v2/internal"
-	"github.com/petewall/firmware-service/v2/lib"
+	"github.com/petewall/firmware-service/internal"
+	"github.com/petewall/firmware-service/lib"
 )
 
 type FakeFirmwareStore struct {

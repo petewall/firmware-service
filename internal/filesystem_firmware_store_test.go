@@ -7,8 +7,8 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	. "github.com/petewall/firmware-service/v2/internal"
-	. "github.com/petewall/firmware-service/v2/lib"
+	. "github.com/petewall/firmware-service/internal"
+	. "github.com/petewall/firmware-service/lib"
 )
 
 func buildTestStoreStructure(firmwareList []*Firmware) string {

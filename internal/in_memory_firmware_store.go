@@ -3,7 +3,7 @@ package internal
 import (
 	"fmt"
 
-	. "github.com/petewall/firmware-service/v2/lib"
+	. "github.com/petewall/firmware-service/lib"
 )
 
 type InMemoryFirmwareStore struct {

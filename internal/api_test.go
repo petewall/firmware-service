@@ -11,10 +11,10 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gbytes"
-	. "github.com/petewall/firmware-service/v2/internal"
-	. "github.com/petewall/firmware-service/v2/internal/internalfakes"
-	. "github.com/petewall/firmware-service/v2/lib"
-	. "github.com/petewall/firmware-service/v2/test"
+	. "github.com/petewall/firmware-service/internal"
+	. "github.com/petewall/firmware-service/internal/internalfakes"
+	. "github.com/petewall/firmware-service/lib"
+	. "github.com/petewall/firmware-service/test"
 )
 
 func readFirmwareList(body io.Reader) []*Firmware {

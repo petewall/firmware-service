@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	. "github.com/petewall/firmware-service/v2/lib"
+	. "github.com/petewall/firmware-service/lib"
 )
 
 type FilesystemFirmwareStore struct {
