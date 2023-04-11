@@ -3,7 +3,7 @@ module github.com/petewall/firmware-service
 go 1.19
 
 require (
-	github.com/Masterminds/semver/v3 v3.2.0
+	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/go-task/slim-sprig v2.20.0+incompatible
 	github.com/google/pprof v0.0.0-20230207041349-798e818bf904
 	github.com/gorilla/handlers v1.5.1
